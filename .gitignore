@@ -1,0 +1,4 @@
+# .env must be ignored in real project
+#.env
+node_modules
+pnpm-lock.yaml
