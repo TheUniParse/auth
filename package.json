@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/server.js",
-    "session": "nodemon src/session/server.js"
+    "session": "nodemon src/session/server.js",
+    "jwt": "nodemon src/jwt/server.js"
   },
   "keywords": [],
   "author": "",
