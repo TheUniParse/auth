@@ -1,35 +1,39 @@
 ### get all users
 GET http://localhost:3000/users
 
+
 ### register new user
 POST http://localhost:3000/signup
 Content-Type: application/json
 
 {
-  "name": "username1",
+  "email": "username1@gmail.com",
+  "username": "username1",
   "password": "password1",
   "role": "admin"
 }
+
 
 ### login user
 POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "name": "username1",
+  "username": "username1",
   "password": "password1"
 }
 
+
 ### get admin data (⚠️ update jwtToken !!)
 GET http://localhost:3000/admin
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcm5hbWUxIiwiaWF0IjoxNjk0MTg3ODU2LCJuYmYiOjE2OTQxODc4NzYsImV4cCI6MTY5NDE4Nzg4Nn0.n3TnZTb5IyMLvELkR00WUg545j1rNoJSHaDsWWApDYk  
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls 
 
 
 ### logout user (⚠️ update jwtToken !!)
 POST http://localhost:3000/logout
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcm5hbWUxIiwiaWF0IjoxNjk0MTg3ODU2LCJuYmYiOjE2OTQxODc4NzYsImV4cCI6MTY5NDE4Nzg4Nn0.n3TnZTb5IyMLvELkR00WUg545j1rNoJSHaDsWWApDYk  
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls 
 
 
 ### delete user account (⚠️ update jwtToken !!)
 DELETE http://localhost:3000/deleteAccount
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcm5hbWUxIiwiaWF0IjoxNjk0MTg3ODU2LCJuYmYiOjE2OTQxODc4NzYsImV4cCI6MTY5NDE4Nzg4Nn0.n3TnZTb5IyMLvELkR00WUg545j1rNoJSHaDsWWApDYk 
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls

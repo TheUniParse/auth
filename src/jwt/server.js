@@ -44,40 +44,42 @@ app.get('/users', (req, res) => res.json(USERS))
 
 // register / signup ...................................
 app.post('/signup', async (req, res) => {
-  const { name, password, role } = req.body
+  const { email, username, password, role } = req.body
   const hachedPw = await bcrypt.hash(password, 10)
   // hachedPw will be prefixed with salt with length of 10
 
-  const user = { name, hachedPw, role }
+  const user = { email, username, hachedPw, role }
 
   // check if user exist
-  const userExist = USERS.some(user => user.name === name)
+  const userExist = USERS.some(u => u.usename === username)
   if (userExist)
-    return res.send(`sorry, the username ${name} already taken`)
+    return res.send(`sorry, the username ${username} already taken`)
 
   USERS.push(user)
-  res.status(200).send(`${name} registered as ${role} !`)
+  res.status(200).send(`${username} registered as ${role} !`)
 
   const time = new Date().toLocaleString()
-  console.log(`registered ${name} as ${role} at ${time}`)
+  console.log(`${username} registered as ${role} at ${time}`)
   console.log(`hached password: ${hachedPw}`)
 })
 
 // login / signin ......................................
 app.post('/login', async (req, res) => {
-  const { name, password } = req.body
+  const { username, password } = req.body
 
-  const user = USERS.find(user => user.name === name)
+  const user = USERS.find(u => u.username === username)
   if (!user)
-    return res.status(401).send(`Cannot login, UnRegistered ${name}`)
+    return res.status(401)
+      .send(`Cannot login, ${username} are not registered !`)
 
   const validPw = await bcrypt.compare(password, user.hachedPw)
   if (!validPw)
-    return res.status(401).send(`Cannot login, Invalid password`)
+    return res.status(401)
+      .send(`Cannot login, Invalid password !`)
 
   // generate jwt token
   const { JWT_KEY } = process.env
-  const payload = { name }
+  const payload = { username }
   const signOptions = {
     notBefore: 20,
     expiresIn: '30s',
@@ -88,10 +90,10 @@ app.post('/login', async (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: 'none', // for test purposes
-  }).send(`${name} logged-in successfully`)
+  }).send(`${username} logged-in successfully`)
 
   const time = new Date().toLocaleString()
-  console.log(`${name} logged-in at ${time}`)
+  console.log(`${username} logged-in at ${time}`)
   console.log(`jwt token: ${jwtToken}`)
 })
 
@@ -110,11 +112,11 @@ app.post('/logout', (req, res) => {
     return res.status(401).send(`Unauthorized, ${err.message}`)
   }
 
-  const { name, iat } = decoded
+  const { username, iat } = decoded
   res.clearCookie('jwtToken')
-  res.send(`${name} logged out seccessfully`)
+  res.send(`${username} logged out seccessfully`)
 
-  console.log(`${name} logged out seccessfully`)
+  console.log(`${username} logged out seccessfully`)
   const formatedIatTime = new Date(iat).toLocaleString()
   console.log(`jwtToken issued at ${formatedIatTime}`)
 })
@@ -134,16 +136,16 @@ app.delete('/deleteAccount', (req, res) => {
     return res.status(401).send(`Unauthorized, ${err.message}`)
   }
 
-  const { name, iat } = decoded
+  const { username, iat } = decoded
 
   // delete user from USERS
-  const userIndex = USERS.findIndex(u => u.name === name)
-  if (userIndex !== -1) USERS.splice(userIndex, 1)
+  const index = USERS.findIndex(u => u.username === username)
+  if (index !== -1) USERS.splice(index, 1)
 
   res.clearCookie('jwtToken')
-  res.send(`${name} deleted account seccessfully`)
+  res.send(`${username} deleted account seccessfully`)
 
-  console.log(`${name} deleted account seccessfully`)
+  console.log(`${username} deleted account seccessfully`)
   const formatedIatTime = new Date(iat).toLocaleString()
   console.log(`jwtToken issued at ${formatedIatTime}`)
 })
@@ -163,15 +165,15 @@ app.get('/admin', (req, res) => {
     return res.status(401).send(`Unauthorized, ${err.message}`)
   }
 
-  const { name, iat } = decoded
-  const user = USERS.find(user => user.name === name)
+  const { username, iat } = decoded
+  const user = USERS.find(u => u.username === username)
 
   if (user.role !== 'admin')
     return res.sendStatus(403) // Forbidden
 
-  res.send(`${name} grents access to admin data`)
+  res.send(`${username} grents access to admin data`)
 
-  console.log(`${name} grents access to admin data`)
+  console.log(`${username} grents access to admin data`)
   const formatedIatTime = new Date(iat).toLocaleString()
   console.log(`jwtToken issued at ${formatedIatTime}`)
 })
