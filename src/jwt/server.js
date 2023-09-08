@@ -19,10 +19,10 @@
  */
 
 import express from 'express'
+import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 
 dotenv.config()
@@ -98,45 +98,18 @@ app.post('/login', async (req, res) => {
 })
 
 // logout / signout
-app.post('/logout', (req, res) => {
-  const { jwtToken } = req.cookies
+app.post('/logout', jwtAuthentication, (req, res) => {
+  const { username } = req.user
 
-  if (!jwtToken)
-    return res.sendStatus(401) // Unauthorized
-
-  const { JWT_KEY } = process.env
-  let decoded
-  try {
-    decoded = jwt.verify(jwtToken, JWT_KEY)
-  } catch (err) {
-    return res.status(401).send(`Unauthorized, ${err.message}`)
-  }
-
-  const { username, iat } = decoded
   res.clearCookie('jwtToken')
   res.send(`${username} logged out seccessfully`)
 
   console.log(`${username} logged out seccessfully`)
-  const formatedIatTime = new Date(iat).toLocaleString()
-  console.log(`jwtToken issued at ${formatedIatTime}`)
 })
 
 // delete account
-app.delete('/deleteAccount', (req, res) => {
-  const { jwtToken } = req.cookies
-
-  if (!jwtToken)
-    return res.sendStatus(401) // Unauthorized
-
-  const { JWT_KEY } = process.env
-  let decoded
-  try {
-    decoded = jwt.verify(jwtToken, JWT_KEY)
-  } catch (err) {
-    return res.status(401).send(`Unauthorized, ${err.message}`)
-  }
-
-  const { username, iat } = decoded
+app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
+  const { username } = req.user
 
   // delete user from USERS
   const index = USERS.findIndex(u => u.username === username)
@@ -146,36 +119,41 @@ app.delete('/deleteAccount', (req, res) => {
   res.send(`${username} deleted account seccessfully`)
 
   console.log(`${username} deleted account seccessfully`)
-  const formatedIatTime = new Date(iat).toLocaleString()
-  console.log(`jwtToken issued at ${formatedIatTime}`)
 })
 
 // authorization
-app.get('/admin', (req, res) => {
-  const { jwtToken } = req.cookies
-
-  if (!jwtToken)
-    return res.sendStatus(401) // Unauthorized
-
-  const { JWT_KEY } = process.env
-  let decoded
-  try {
-    decoded = jwt.verify(jwtToken, JWT_KEY)
-  } catch (err) {
-    return res.status(401).send(`Unauthorized, ${err.message}`)
-  }
-
-  const { username, iat } = decoded
+app.get('/admin', jwtAuthentication, (req, res) => {
+  const { username } = req.user
   const user = USERS.find(u => u.username === username)
 
   if (user.role !== 'admin')
     return res.sendStatus(403) // Forbidden
 
   res.send(`${username} grents access to admin data`)
-
   console.log(`${username} grents access to admin data`)
-  const formatedIatTime = new Date(iat).toLocaleString()
-  console.log(`jwtToken issued at ${formatedIatTime}`)
 })
+
+// authentication middleware
+function jwtAuthentication(req, res, next) {
+  const { jwtToken } = req.cookies
+  if (!jwtToken) return res.sendStatus(401) // Unauthorized
+
+  try {
+    const { JWT_KEY } = process.env
+    const decoded = jwt.verify(jwtToken, JWT_KEY)
+    const { username, iat } = decoded
+
+    req.user = { username }
+
+    console.log(`${username} authenticated !`)
+    const formatedIatTime = new Date(iat).toLocaleString()
+    console.log(`jwtToken issued at ${formatedIatTime}`)
+
+    next()
+  }
+  catch (err) {
+    res.status(401).send(`Unauthorized, ${err.message}`)
+  }
+}
 
 app.listen(3000)

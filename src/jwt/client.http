@@ -26,14 +26,14 @@ Content-Type: application/json
 
 ### get admin data (⚠️ update jwtToken !!)
 GET http://localhost:3000/admin
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls 
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MzQ4OSwibmJmIjoxNjk0MTkzNTA5LCJleHAiOjE2OTQxOTM1MTl9.ubaA4ehduuMtj-hqwLUvkZ3r3exF6CLx95kTtXl-W5U
 
 
 ### logout user (⚠️ update jwtToken !!)
 POST http://localhost:3000/logout
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls 
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MzQ4OSwibmJmIjoxNjk0MTkzNTA5LCJleHAiOjE2OTQxOTM1MTl9.ubaA4ehduuMtj-hqwLUvkZ3r3exF6CLx95kTtXl-W5U
 
 
 ### delete user account (⚠️ update jwtToken !!)
 DELETE http://localhost:3000/deleteAccount
-Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MTA1NCwibmJmIjoxNjk0MTkxMDc0LCJleHAiOjE2OTQxOTEwODR9.VtRwnkEtjWBObHScg7Xb4crt9GdefIjeU_DQzIk2Gls
+Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lMSIsImlhdCI6MTY5NDE5MzQ4OSwibmJmIjoxNjk0MTkzNTA5LCJleHAiOjE2OTQxOTM1MTl9.ubaA4ehduuMtj-hqwLUvkZ3r3exF6CLx95kTtXl-W5U
