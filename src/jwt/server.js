@@ -42,9 +42,10 @@ app.use(cookieParser())
 // get users ...........................................
 app.get('/users', (req, res) => res.json(USERS))
 
-// register / signup ...................................
-app.post('/signup', async (req, res) => {
+// register / signUp ...................................
+app.post('/register', async (req, res) => {
   const { email, username, password, role } = req.body
+
   const hachedPw = await bcrypt.hash(password, 10)
   // hachedPw will be prefixed with salt with length of 10
 
@@ -63,7 +64,7 @@ app.post('/signup', async (req, res) => {
   console.log(`hached password: ${hachedPw}`)
 })
 
-// login / signin ......................................
+// logIn / signIn ......................................
 app.post('/login', async (req, res) => {
   const { username, password } = req.body
 
@@ -80,11 +81,11 @@ app.post('/login', async (req, res) => {
   // generate jwt token
   const { JWT_KEY } = process.env
   const payload = { username }
-  const signOptions = {
-    notBefore: 20,
-    expiresIn: '30s',
+  const options = {
+    notBefore: 20, // 2s
+    expiresIn: '30s', // 14d
   }
-  const jwtToken = jwt.sign(payload, JWT_KEY, signOptions)
+  const jwtToken = jwt.sign(payload, JWT_KEY, options)
 
   res.cookie('jwtToken', jwtToken, {
     secure: true,
@@ -97,7 +98,7 @@ app.post('/login', async (req, res) => {
   console.log(`jwt token: ${jwtToken}`)
 })
 
-// logout / signout
+// logOut / signOut ....................................
 app.post('/logout', jwtAuthentication, (req, res) => {
   const { username } = req.user
 
@@ -107,7 +108,7 @@ app.post('/logout', jwtAuthentication, (req, res) => {
   console.log(`${username} logged out seccessfully`)
 })
 
-// delete account
+// delete account ......................................
 app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
   const { username } = req.user
 
@@ -121,7 +122,7 @@ app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
   console.log(`${username} deleted account seccessfully`)
 })
 
-// authorization
+// authorization .......................................
 app.get('/admin', jwtAuthentication, (req, res) => {
   const { username } = req.user
   const user = USERS.find(u => u.username === username)
@@ -129,8 +130,8 @@ app.get('/admin', jwtAuthentication, (req, res) => {
   if (user.role !== 'admin')
     return res.sendStatus(403) // Forbidden
 
-  res.send(`${username} grents access to admin data`)
-  console.log(`${username} grents access to admin data`)
+  res.send(`${username} grents admin access`)
+  console.log(`${username} grents admin access`)
 })
 
 // authentication middleware
