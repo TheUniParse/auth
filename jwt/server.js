@@ -18,14 +18,14 @@
  * ⚠️ cookie can manual accessed (devTools/application/cookies)
  */
 
-import express from 'express'
 import dotenv from 'dotenv'
+dotenv.config()
+
+import express from 'express'
 import bcrypt from 'bcrypt'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import jwt from 'jsonwebtoken'
-
-dotenv.config()
 
 // simulate database
 const USERS = []
@@ -44,17 +44,17 @@ app.get('/users', (req, res) => res.json(USERS))
 
 // register / signUp ...................................
 app.post('/register', async (req, res) => {
-  const { email, username, password, role } = req.body
+  const { username, password, email, role } = req.body
 
-  const hachedPw = await bcrypt.hash(password, 10)
-  // hachedPw will be prefixed with salt with length of 10
-
-  const user = { email, username, hachedPw, role }
-
-  // check if user exist
   const userExist = USERS.some(u => u.usename === username)
   if (userExist)
-    return res.send(`sorry, the username ${username} already taken`)
+    return res.status(409) // Conflict
+      .send(`sorry, the username ${username} already taken`)
+
+  // hachedPw will be prefixed with salt with length of 10
+  const hachedPw = await bcrypt.hash(password, 10)
+  const id = crypto.randomUUID()
+  const user = { id, username, hachedPw, email, role }
 
   USERS.push(user)
   res.status(200).send(`${username} registered as ${role} !`)
@@ -73,17 +73,18 @@ app.post('/login', async (req, res) => {
     return res.status(401)
       .send(`Cannot login, ${username} are not registered !`)
 
-  const validPw = await bcrypt.compare(password, user.hachedPw)
+  const { hachedPw } = user
+  const validPw = await bcrypt.compare(password, hachedPw)
   if (!validPw)
     return res.status(401)
       .send(`Cannot login, Invalid password !`)
 
   // generate jwt token
   const { JWT_KEY } = process.env
-  const payload = { username }
+  const payload = { id: user.id }
   const options = {
     notBefore: 20, // 2s
-    expiresIn: '30s', // 14d
+    expiresIn: '2m', // 14d
   }
   const jwtToken = jwt.sign(payload, JWT_KEY, options)
 
@@ -100,36 +101,39 @@ app.post('/login', async (req, res) => {
 
 // logOut / signOut ....................................
 app.post('/logout', jwtAuthentication, (req, res) => {
-  const { username } = req.user
+  const { id } = req.user
 
   res.clearCookie('jwtToken')
-  res.send(`${username} logged out seccessfully`)
 
+  const username = getUsername(id)
+  res.send(`${username} logged out seccessfully`)
   console.log(`${username} logged out seccessfully`)
 })
 
 // delete account ......................................
 app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
-  const { username } = req.user
-
-  // delete user from USERS
-  const index = USERS.findIndex(u => u.username === username)
-  if (index !== -1) USERS.splice(index, 1)
+  const { id } = req.user
+  const username = getUsername(id)
 
   res.clearCookie('jwtToken')
-  res.send(`${username} deleted account seccessfully`)
 
+  // delete user from USERS
+  const index = USERS.findIndex(u => u.id === id)
+  if (index !== -1) USERS.splice(index, 1)
+
+  res.send(`${username} deleted account seccessfully`)
   console.log(`${username} deleted account seccessfully`)
 })
 
 // authorization .......................................
 app.get('/admin', jwtAuthentication, (req, res) => {
-  const { username } = req.user
-  const user = USERS.find(u => u.username === username)
+  const { id } = req.user
 
+  const user = USERS.find(u => u.id === id)
   if (user.role !== 'admin')
     return res.sendStatus(403) // Forbidden
 
+  const { username } = user
   res.send(`${username} grents admin access`)
   console.log(`${username} grents admin access`)
 })
@@ -142,10 +146,11 @@ function jwtAuthentication(req, res, next) {
   try {
     const { JWT_KEY } = process.env
     const decoded = jwt.verify(jwtToken, JWT_KEY)
-    const { username, iat } = decoded
+    const { id, iat } = decoded
 
-    req.user = { username }
+    req.user = { id }
 
+    const username = getUsername(id)
     console.log(`${username} authenticated !`)
     const formatedIatTime = new Date(iat).toLocaleString()
     console.log(`jwtToken issued at ${formatedIatTime}`)
@@ -155,6 +160,12 @@ function jwtAuthentication(req, res, next) {
   catch (err) {
     res.status(401).send(`Unauthorized, ${err.message}`)
   }
+}
+
+function getUsername(id) {
+  const user = USERS.find(u => u.id === id)
+  const { username } = user
+  return username
 }
 
 app.listen(3000)

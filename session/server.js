@@ -43,17 +43,17 @@ app.get('/users', (req, res) => res.json(USERS))
 
 // register / signUp ...................................
 app.post('/register', async (req, res) => {
-  const { email, username, password, role } = req.body
+  const { username, password, email, role } = req.body
 
-  const hachedPw = await bcrypt.hash(password, 10)
-  // hachedPw will be prefixed with salt with length of 10
-
-  const user = { email, username, hachedPw, role }
-
-  // check if user exist
   const userExist = USERS.some(u => u.usename === username)
   if (userExist)
-    return res.send(`sorry, the username ${username} already taken`)
+    return res.status(409) // Conflict
+      .send(`sorry, the username ${username} already taken`)
+
+  // hachedPw will be prefixed with salt with length of 10
+  const hachedPw = await bcrypt.hash(password, 10)
+  const id = crypto.randomUUID()
+  const user = { id, username, hachedPw, email, role }
 
   USERS.push(user)
   res.status(200).send(`${username} registered as ${role} !`)
@@ -72,13 +72,14 @@ app.post('/login', async (req, res) => {
     return res.status(401)
       .send(`Cannot login, ${username} are not registered !`)
 
-  const validPw = await bcrypt.compare(password, user.hachedPw)
+  const { hachedPw } = user
+  const validPw = await bcrypt.compare(password, hachedPw)
   if (!validPw)
     return res.status(401)
       .send(`Cannot login, Invalid password !`)
 
   const sessionId = crypto.randomUUID()
-  SESSIONS.set(sessionId, username)
+  SESSIONS.set(sessionId, user.id)
 
   res.cookie('sessionId', sessionId, {
     secure: true,
@@ -94,11 +95,12 @@ app.post('/login', async (req, res) => {
 // logOut / signOut ....................................
 app.post('/logout', sessionAuthentication, (req, res) => {
   const { sessionId } = req.cookies
-  const { username } = req
+  const { id } = req.user
 
   SESSIONS.delete(sessionId)
   res.clearCookie('sessionId')
 
+  const username = getUsername(id)
   res.send(`${username} logged out seccessfully`)
   console.log(`${username} logged out seccessfully`)
 })
@@ -106,14 +108,15 @@ app.post('/logout', sessionAuthentication, (req, res) => {
 // delete account ......................................
 app.delete('/deleteAccount', sessionAuthentication, (req, res) => {
   const { sessionId } = req.cookies
-  const { username } = req
+  const { id } = req.user
+  const username = getUsername(id)
 
   res.clearCookie('sessionId')
   SESSIONS.delete(sessionId)
 
   // delete user from USERS
-  const index = USERS.findIndex(u => u.username === username)
-  if (index !== -1) USERS.splice(index, 1)
+  const userIndex = USERS.findIndex(u => u.id === id)
+  if (userIndex !== -1) USERS.splice(userIndex, 1)
 
   res.send(`${username} deleted account seccessfully`)
   console.log(`${username} deleted account seccessfully`)
@@ -121,12 +124,13 @@ app.delete('/deleteAccount', sessionAuthentication, (req, res) => {
 
 // authorization .......................................
 app.get('/admin', sessionAuthentication, (req, res) => {
-  const { username } = req
-  const user = USERS.find(u => u.username === username)
+  const { id } = req.user
 
+  const user = USERS.find(u => u.id === id)
   if (user.role !== 'admin')
     return res.sendStatus(403) // Forbidden
 
+  const { username } = user
   res.send(`${username} grents admin access`)
   console.log(`${username} grents admin access`)
 })
@@ -139,11 +143,19 @@ function sessionAuthentication(req, res, next) {
   if (!SESSIONS.has(sessionId))
     return res.sendStatus(401) // Unauthorized
 
-  const username = SESSIONS.get(sessionId)
-  req.username = username
+  const id = SESSIONS.get(sessionId)
+  req.user = { id }
+
+  const username = getUsername(id)
   console.log(`${username} authenticated !`)
 
   next()
+}
+
+function getUsername(id) {
+  const user = USERS.find(u => u.id === id)
+  const { username } = user
+  return username
 }
 
 app.listen(3000)
