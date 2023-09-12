@@ -5,9 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/server.js",
-    "session": "nodemon src/session/server.js",
-    "jwt": "nodemon src/jwt/server.js"
+    "session": "nodemon session/server.js",
+    "jwt": "nodemon jwt/server.js"
   },
   "keywords": [],
   "author": "",
