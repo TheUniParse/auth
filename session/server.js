@@ -33,7 +33,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors({
-  origin: 'http://192.168.1.3:5500',
+  origin: 'http://localhost:5173',
   credentials: true
 }))
 app.use(cookieParser())
@@ -45,7 +45,7 @@ app.get('/users', (req, res) => res.json(USERS))
 app.post('/register', async (req, res) => {
   const { username, password, email, role } = req.body
 
-  const userExist = USERS.some(u => u.usename === username)
+  const userExist = USERS.some(u => u.username === username)
   if (userExist)
     return res.status(409) // Conflict
       .send(`sorry, the username ${username} already taken`)
