@@ -93,7 +93,7 @@ app.post('/login', async (req, res) => {
 })
 
 // logOut / signOut ....................................
-app.post('/logout', sessionAuthentication, (req, res) => {
+app.delete('/logout', sessionAuthentication, (req, res) => {
   const { sessionId } = req.cookies
   const { id } = req.user
 
@@ -128,7 +128,8 @@ app.get('/admin', sessionAuthentication, (req, res) => {
 
   const user = USERS.find(u => u.id === id)
   if (user.role !== 'admin')
-    return res.sendStatus(403) // Forbidden
+    return res.status(403) // Forbidden
+      .send('sorry, only admin have access')
 
   const { username } = user
   res.send(`${username} grents admin access`)

@@ -30,7 +30,7 @@ Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNjOWMzNGE5LTA1
 
 
 ### logout user (⚠️ update jwtToken !!)
-POST http://localhost:3000/logout
+DELETE http://localhost:3000/logout
 Cookie: jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNjOWMzNGE5LTA1ZmMtNDdhOS04NzU3LWY5ZjdkZjEzMDUxMiIsImlhdCI6MTY5NDUzNTM4NiwibmJmIjoxNjk0NTM1NDA2LCJleHAiOjE2OTQ1MzU1MDZ9.h2z9FtludHp99q9CtUmjwAdJQE6hr6bGYLmdabKYCt8
 
 

@@ -66,7 +66,6 @@ export default function Register() {
 
       <input type='submit' onClick={handleSumbit} />
       <br />
-      <br />
 
       <pre className='inline-block text-left'>{message}</pre>
     </fieldset>

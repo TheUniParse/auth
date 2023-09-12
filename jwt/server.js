@@ -34,7 +34,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors({
-  origin: 'http://http://localhost:5173', // for test purpose
+  origin: 'http://localhost:5173', // for test purpose
   credentials: true
 }))
 app.use(cookieParser())
@@ -83,7 +83,7 @@ app.post('/login', async (req, res) => {
   const { JWT_KEY } = process.env
   const payload = { id: user.id }
   const options = {
-    notBefore: 20, // 2s
+    notBefore: 2, // 2s
     expiresIn: '2m', // 14d
   }
   const jwtToken = jwt.sign(payload, JWT_KEY, options)
@@ -100,7 +100,7 @@ app.post('/login', async (req, res) => {
 })
 
 // logOut / signOut ....................................
-app.post('/logout', jwtAuthentication, (req, res) => {
+app.delete('/logout', jwtAuthentication, (req, res) => {
   const { id } = req.user
 
   res.clearCookie('jwtToken')
@@ -131,7 +131,8 @@ app.get('/admin', jwtAuthentication, (req, res) => {
 
   const user = USERS.find(u => u.id === id)
   if (user.role !== 'admin')
-    return res.sendStatus(403) // Forbidden
+    return res.status(403) // Forbidden
+      .send('sorry, only admin have access')
 
   const { username } = user
   res.send(`${username} grents admin access`)

@@ -30,7 +30,7 @@ Cookie: sessionId = 474bcef8-87ff-47c7-b6f5-e6026e20dbc2
 
 
 ### logout user (⚠️ update sessionId !!)
-POST http://localhost:3000/logout
+DELETE http://localhost:3000/logout
 Cookie: sessionId = 474bcef8-87ff-47c7-b6f5-e6026e20dbc2
 
 
