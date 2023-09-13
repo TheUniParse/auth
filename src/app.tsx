@@ -5,6 +5,7 @@ import Login from './login'
 import Register from './register'
 import Users from './users'
 import Log from './log'
+import domain from './domain'
 
 export default function App() {
   const [users, setUsers] = useState([])
@@ -31,7 +32,7 @@ export default function App() {
   )
 
   async function updateUsers() {
-    const res = await fetch('http://localhost:3000/users', {
+    const res = await fetch(`${domain}/users`, {
       method: 'GET',
       credentials: 'include', // allow cookies
     })

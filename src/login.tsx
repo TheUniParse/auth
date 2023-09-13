@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import domain from './domain'
 
 export default function Login({ setMessage }: any) {
   const [username, setUsername] = useState('username1')
@@ -53,7 +54,7 @@ export default function Login({ setMessage }: any) {
     e.preventDefault()
 
     const body = JSON.stringify(user)
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch(`${domain}/login`, {
       method: 'POST',
       credentials: 'include', // allow cookies
       headers: { 'Content-Type': 'application/json' },

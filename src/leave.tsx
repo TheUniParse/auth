@@ -1,3 +1,5 @@
+import domain from './domain'
+
 export default function Leave({
   updateUsers,
   setMessage,
@@ -6,7 +8,7 @@ export default function Leave({
     <fieldset className='m-0  rounded-xl text-center'>
       <legend className='text-center text-3xl'>Leaving</legend>
 
-      <button type='button' onClick={e => handler(e, 'logout')}>
+      <button type='button' onClick={() => handler('logout')}>
         LogOut / SignOut
       </button>
       <br />
@@ -15,16 +17,14 @@ export default function Leave({
       <button
         className='text-red-300'
         type='button'
-        onClick={e => handler(e, 'deleteAccount')}>
+        onClick={() => handler('deleteAccount')}>
         Delete Account
       </button>
     </fieldset>
   )
 
-  async function handler(e: any, route: string) {
-    e.preventDefault()
-
-    const res = await fetch(`http://localhost:3000/${route}`, {
+  async function handler(route: string) {
+    const res = await fetch(`${domain}/${route}`, {
       method: 'DELETE',
       credentials: 'include', // allow cookies
     })

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import domain from './domain'
 
 export default function Register({ updateUsers, setMessage }: any) {
   const [username, setUsername] = useState('username1')
@@ -125,7 +126,7 @@ export default function Register({ updateUsers, setMessage }: any) {
     const user = { username, password, email, role }
     const body = JSON.stringify(user)
 
-    const res = await fetch('http://localhost:3000/register', {
+    const res = await fetch(`${domain}/register`, {
       method: 'POST',
       credentials: 'include', // allow cookies
       headers: { 'Content-Type': 'application/json' },

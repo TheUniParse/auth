@@ -1,3 +1,5 @@
+import domain from "./domain"
+
 export default function Admin({ setMessage }: any) {
   return (
     <fieldset className='m-0  rounded-xl text-center'>
@@ -11,10 +13,8 @@ export default function Admin({ setMessage }: any) {
     </fieldset>
   )
 
-  async function handler(e: any) {
-    e.preventDefault()
-
-    const res = await fetch('http://localhost:3000/admin', {
+  async function handler() {
+    const res = await fetch(`${domain}/admin`, {
       method: 'GET',
       credentials: 'include', // allow cookies
     })
