@@ -9,7 +9,7 @@ Content-Type: application/json
 {
   "email": "username1@gmail.com",
   "username": "username1",
-  "password": "password1",
+  "password": "Password1",
   "role": "admin"
 }
 
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 {
   "username": "username1",
-  "password": "password1"
+  "password": "Password1"
 }
 
 

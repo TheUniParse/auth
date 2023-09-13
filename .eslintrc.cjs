@@ -14,6 +14,7 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
+  ignorePatterns: ['server'],
   plugins: [
     'react-refresh',
     '@typescript-eslint',

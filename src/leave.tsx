@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Leave() {
+export default function Leave({ updateUsers }: any) {
   const [message, setMessage] = useState('waiting...')
 
   return (
@@ -16,6 +16,7 @@ export default function Leave() {
       <br />
 
       <button
+        className='text-red-300'
         type='button'
         onClick={e => handler(e, 'deleteAccount')}>
         Delete Account
@@ -34,6 +35,7 @@ export default function Leave() {
       credentials: 'include', // allow cookies
     })
 
+    updateUsers()
     setMessage(
       `status: ${res.status} ${
         res.statusText

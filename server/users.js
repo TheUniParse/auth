@@ -3,11 +3,15 @@ import path from 'path'
 
 const usersPath = path.join(process.cwd(), 'db', 'users.json')
 
-export function getUsers({ username, id } = {}) {
+export function getUsers() {
   const usersJson = fs.readFileSync(usersPath, 'utf8')
   const users = JSON.parse(usersJson)
+  return users
+}
 
-  if (!username && !id) return users
+export function getUser({ username, id }) {
+  const usersJson = fs.readFileSync(usersPath, 'utf8')
+  const users = JSON.parse(usersJson)
 
   const user = users.find(u => username
     ? u.username === username

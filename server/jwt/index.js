@@ -29,6 +29,7 @@ import jwt from 'jsonwebtoken'
 import {
   addUser,
   getUsers,
+  getUser,
   hasUser,
   deleteUser
 } from '../users.js'
@@ -47,41 +48,41 @@ app.get('/users', (req, res) => res.json(getUsers()))
 
 // register / signUp ...................................
 app.post('/register', async (req, res) => {
-  const { username, password, email, role } = req.body
+  const { username, password, email, role: rawRole } = req.body
 
   const unAvailable = hasUser({ username })
-  if (unAvailable)
-    return res.status(409) // Conflict
-      .send(`sorry, the username ${username} already taken`)
+  if (unAvailable) return res.status(409) // Conflict
+    .send(`sorry, the username ${username} already taken`)
 
-  // hachedPw will be prefixed with salt with length of 10
-  const hachedPw = await bcrypt.hash(password, 10)
+  // passwordHash will be prefixed with salt with length of 10
+  // so even if two passwords are the same, its hashes are not
+  const passwordHash = await bcrypt.hash(password, 10)
   const id = crypto.randomUUID()
 
-  const newUser = { id, username, hachedPw, email, role }
+  const role = rawRole.toLowerCase()
+
+  const newUser = { id, username, passwordHash, email, role }
   addUser(newUser)
 
   res.send(`${username} registered as ${role} !`)
 
   const time = new Date().toLocaleString()
   console.log(`${username} registered as ${role} at ${time}`)
-  console.log(`hached password: ${hachedPw}`)
+  console.log(`password hash: ${passwordHash}`)
 })
 
 // logIn / signIn ......................................
 app.post('/login', async (req, res) => {
   const { username, password } = req.body
 
-  const user = getUsers({ username })
-  if (!user)
-    return res.status(401)
-      .send(`Cannot login, ${username} are not registered !`)
+  const user = getUser({ username })
+  if (!user) return res.status(401) // Unauthorized
+    .send(`Cannot login, ${username} are not registered !`)
 
-  const { hachedPw } = user
-  const validPw = await bcrypt.compare(password, hachedPw)
-  if (!validPw)
-    return res.status(401)
-      .send(`Cannot login, Invalid password !`)
+  const { passwordHash } = user
+  const validPw = await bcrypt.compare(password, passwordHash)
+  if (!validPw) return res.status(401) // Unauthorized
+    .send(`Cannot login, Invalid password !`)
 
   // generate jwt token
   const { JWT_KEY } = process.env
@@ -108,7 +109,7 @@ app.delete('/logout', jwtAuthentication, (req, res) => {
   res.clearCookie('jwtToken')
 
   const { id } = req.user
-  const user = getUsers({ id })
+  const user = getUser({ id })
   const { username } = user
   res.send(`${username} logged out seccessfully`)
   console.log(`${username} logged out seccessfully`)
@@ -119,7 +120,7 @@ app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
   res.clearCookie('jwtToken')
 
   const { id } = req.user
-  const user = getUsers({ id })
+  const user = getUser({ id })
   deleteUser({ id })
 
   const { username } = user
@@ -130,11 +131,10 @@ app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
 // authorization .......................................
 app.get('/admin', jwtAuthentication, (req, res) => {
   const { id } = req.user
-  const user = getUsers({ id })
+  const user = getUser({ id })
 
-  if (user.role !== 'admin')
-    return res.status(403) // Forbidden
-      .send('sorry, only admin have access')
+  if (user.role !== 'admin') return res.status(403)
+    .send('sorry, only admin have access') // Forbidden
 
   const { username } = user
   res.send(`${username} grents admin access`)
@@ -144,7 +144,8 @@ app.get('/admin', jwtAuthentication, (req, res) => {
 // authentication middleware
 function jwtAuthentication(req, res, next) {
   const { jwtToken } = req.cookies
-  if (!jwtToken) return res.sendStatus(401) // Unauthorized
+  if (!jwtToken) return res.status(401) // Unauthorized
+    .send('please login first !!')
 
   try {
     const { JWT_KEY } = process.env
@@ -153,7 +154,7 @@ function jwtAuthentication(req, res, next) {
 
     req.user = { id }
 
-    const user = getUsers({ id })
+    const user = getUser({ id })
     const { username } = user
     console.log(`${username} authenticated !`)
     const formatedIatTime = new Date(iat).toLocaleString()
@@ -162,7 +163,7 @@ function jwtAuthentication(req, res, next) {
     next()
   }
   catch (err) {
-    res.status(401).send(`Unauthorized, ${err.message}`)
+    res.status(401).send(`please re-login first, ${err.message}`)
   }
 }
 
