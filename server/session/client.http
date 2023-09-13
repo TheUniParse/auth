@@ -26,14 +26,14 @@ Content-Type: application/json
 
 ### get admin data (⚠️ update sessionId !!)
 GET http://localhost:3000/admin
-Cookie: sessionId = 474bcef8-87ff-47c7-b6f5-e6026e20dbc2
+Cookie: sessionId = 0b72fd7e-1489-40a6-9258-be9b459a41ed
 
 
 ### logout user (⚠️ update sessionId !!)
 DELETE http://localhost:3000/logout
-Cookie: sessionId = 474bcef8-87ff-47c7-b6f5-e6026e20dbc2
+Cookie: sessionId = 0b72fd7e-1489-40a6-9258-be9b459a41ed
 
 
 ### delete user account (⚠️ update sessionId !!)
 DELETE http://localhost:3000/deleteAccount
-Cookie: sessionId = 474bcef8-87ff-47c7-b6f5-e6026e20dbc2
+Cookie: sessionId = 0b72fd7e-1489-40a6-9258-be9b459a41ed

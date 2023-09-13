@@ -26,9 +26,12 @@ import bcrypt from 'bcrypt'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import jwt from 'jsonwebtoken'
-
-// simulate database
-const USERS = []
+import {
+  addUser,
+  getUsers,
+  hasUser,
+  deleteUser
+} from '../users.js'
 
 const app = express()
 
@@ -40,24 +43,25 @@ app.use(cors({
 app.use(cookieParser())
 
 // get users ...........................................
-app.get('/users', (req, res) => res.json(USERS))
+app.get('/users', (req, res) => res.json(getUsers()))
 
 // register / signUp ...................................
 app.post('/register', async (req, res) => {
   const { username, password, email, role } = req.body
 
-  const userExist = USERS.some(u => u.username === username)
-  if (userExist)
+  const unAvailable = hasUser({ username })
+  if (unAvailable)
     return res.status(409) // Conflict
       .send(`sorry, the username ${username} already taken`)
 
   // hachedPw will be prefixed with salt with length of 10
   const hachedPw = await bcrypt.hash(password, 10)
   const id = crypto.randomUUID()
-  const user = { id, username, hachedPw, email, role }
 
-  USERS.push(user)
-  res.status(200).send(`${username} registered as ${role} !`)
+  const newUser = { id, username, hachedPw, email, role }
+  addUser(newUser)
+
+  res.send(`${username} registered as ${role} !`)
 
   const time = new Date().toLocaleString()
   console.log(`${username} registered as ${role} at ${time}`)
@@ -68,7 +72,7 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body
 
-  const user = USERS.find(u => u.username === username)
+  const user = getUsers({ username })
   if (!user)
     return res.status(401)
       .send(`Cannot login, ${username} are not registered !`)
@@ -101,26 +105,24 @@ app.post('/login', async (req, res) => {
 
 // logOut / signOut ....................................
 app.delete('/logout', jwtAuthentication, (req, res) => {
-  const { id } = req.user
-
   res.clearCookie('jwtToken')
 
-  const username = getUsername(id)
+  const { id } = req.user
+  const user = getUsers({ id })
+  const { username } = user
   res.send(`${username} logged out seccessfully`)
   console.log(`${username} logged out seccessfully`)
 })
 
 // delete account ......................................
 app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
-  const { id } = req.user
-  const username = getUsername(id)
-
   res.clearCookie('jwtToken')
 
-  // delete user from USERS
-  const index = USERS.findIndex(u => u.id === id)
-  if (index !== -1) USERS.splice(index, 1)
+  const { id } = req.user
+  const user = getUsers({ id })
+  deleteUser({ id })
 
+  const { username } = user
   res.send(`${username} deleted account seccessfully`)
   console.log(`${username} deleted account seccessfully`)
 })
@@ -128,8 +130,8 @@ app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
 // authorization .......................................
 app.get('/admin', jwtAuthentication, (req, res) => {
   const { id } = req.user
+  const user = getUsers({ id })
 
-  const user = USERS.find(u => u.id === id)
   if (user.role !== 'admin')
     return res.status(403) // Forbidden
       .send('sorry, only admin have access')
@@ -151,7 +153,8 @@ function jwtAuthentication(req, res, next) {
 
     req.user = { id }
 
-    const username = getUsername(id)
+    const user = getUsers({ id })
+    const { username } = user
     console.log(`${username} authenticated !`)
     const formatedIatTime = new Date(iat).toLocaleString()
     console.log(`jwtToken issued at ${formatedIatTime}`)
@@ -161,12 +164,6 @@ function jwtAuthentication(req, res, next) {
   catch (err) {
     res.status(401).send(`Unauthorized, ${err.message}`)
   }
-}
-
-function getUsername(id) {
-  const user = USERS.find(u => u.id === id)
-  const { username } = user
-  return username
 }
 
 app.listen(3000)
