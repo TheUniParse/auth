@@ -1,16 +1,13 @@
-import { useState } from 'react'
-
-export default function Leave({ updateUsers }: any) {
-  const [message, setMessage] = useState('waiting...')
-
+export default function Leave({
+  updateUsers,
+  setMessage,
+}: any) {
   return (
-    <fieldset className='m-0  rounded-xl p-0 text-center'>
-      <legend className='text-center text-3xl'>
-        LogOut / Delete Account
-      </legend>
+    <fieldset className='m-0  rounded-xl text-center'>
+      <legend className='text-center text-3xl'>Leaving</legend>
 
       <button type='button' onClick={e => handler(e, 'logout')}>
-        LogOut
+        LogOut / SignOut
       </button>
       <br />
       <br />
@@ -21,9 +18,6 @@ export default function Leave({ updateUsers }: any) {
         onClick={e => handler(e, 'deleteAccount')}>
         Delete Account
       </button>
-      <br />
-
-      <pre className='inline-block text-left'>{message}</pre>
     </fieldset>
   )
 

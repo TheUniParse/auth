@@ -1,18 +1,13 @@
-import { useState } from 'react'
-
-export default function Admin() {
-  const [message, setMessage] = useState('waiting...')
-
+export default function Admin({ setMessage }: any) {
   return (
-    <fieldset className='m-0  rounded-xl p-0 text-center'>
-      <legend className='text-center text-3xl'>Admin authorization</legend>
+    <fieldset className='m-0  rounded-xl text-center'>
+      <legend className='text-center text-3xl'>
+        Authorization
+      </legend>
 
       <button type='button' onClick={handler}>
         Request Admin Access
       </button>
-      <br />
-
-      <pre className='inline-block text-left'>{message}</pre>
     </fieldset>
   )
 

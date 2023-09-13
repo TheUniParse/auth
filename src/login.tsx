@@ -1,16 +1,17 @@
 import { useState } from 'react'
 
-export default function Login() {
+export default function Login({ setMessage }: any) {
   const [username, setUsername] = useState('username1')
   const [password, setPassword] = useState('Password1')
-  const [message, setMessage] = useState('waiting...')
 
   const user = { username, password }
 
   return (
     <form onSubmit={handleSumbit}>
-      <fieldset className='m-0  rounded-xl p-0 text-center'>
-        <legend className='text-center text-3xl'>LogIn</legend>
+      <fieldset className='m-0  h-[100%] rounded-xl text-center'>
+        <legend className='text-center text-3xl'>
+          Entering
+        </legend>
 
         <label className='mb-1 inline-block text-left'>
           username:
@@ -18,8 +19,6 @@ export default function Login() {
           <input
             type='text'
             placeholder='username'
-            pattern='\w{5,12}'
-            title='enter 5~12 characters: a~z or 0~9 or _'
             value={username}
             required
             onChange={e => setUsername(e.target.value)}
@@ -45,10 +44,7 @@ export default function Login() {
         <br />
         <br />
 
-        <input type='submit' />
-        <br />
-
-        <pre className='inline-block text-left'>{message}</pre>
+        <input type='submit' value='LogIn / SignIn' />
       </fieldset>
     </form>
   )

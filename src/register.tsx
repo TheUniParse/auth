@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Register({ updateUsers }: any) {
+export default function Register({ updateUsers, setMessage }: any) {
   const [username, setUsername] = useState('username1')
   const [password, setPassword] = useState('Password1')
   const [confirmPassword, setConfirmPassword] =
@@ -10,11 +10,10 @@ export default function Register({ updateUsers }: any) {
     'username1@gmail.com'
   )
   const [role, setRole] = useState('Admin')
-  const [message, setMessage] = useState('waiting...')
 
   return (
     <form onSubmit={handleSumbit}>
-      <fieldset className='m-0  rounded-xl text-center'>
+      <fieldset className='m-0  h-[100%] rounded-xl text-center'>
         <legend className='text-center text-3xl'>
           Registration
         </legend>
@@ -25,8 +24,6 @@ export default function Register({ updateUsers }: any) {
           <input
             type='email'
             placeholder='email'
-            pattern='^[\w\.-]+@[\w\.-]+\.\w+$'
-            title='enter username@address.domain'
             required
             value={email}
             onChange={e => {
@@ -61,8 +58,6 @@ export default function Register({ updateUsers }: any) {
           <input
             type='text'
             placeholder='username'
-            pattern='\w{5,12}'
-            title='enter 5~12 characters: a~z or 0~9 or _'
             value={username}
             required
             onChange={e => setUsername(e.target.value)}
@@ -112,17 +107,14 @@ export default function Register({ updateUsers }: any) {
           <select
             required
             onChange={e => setRole(e.target.value)}>
-            <option selected>Admin</option>
+            <option>Admin</option>
             <option>Guest</option>
           </select>
         </label>
         <br />
         <br />
 
-        <input type='submit' />
-        <br />
-
-        <pre className='inline-block text-left'>{message}</pre>
+        <input type='submit' value='Register / SignUp' />
       </fieldset>
     </form>
   )

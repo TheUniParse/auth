@@ -18,8 +18,9 @@ export default function Users({ users, updateUsers }: any) {
             <summary>{user.username}</summary>
             <ul className='text-left'>
               {Object.entries(user).map(([k, v]: any) => (
-                <li className='break-all'>
-                  {k}: {v}
+                <li key={k} className='break-all'>
+                  <span className='text-cyan-500'>{k}</span>:{' '}
+                  {v}
                 </li>
               ))}
             </ul>

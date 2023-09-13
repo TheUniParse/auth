@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "50640414-7ab5-4113-a209-c3667c164cf5",
+    "username": "username1",
+    "passwordHash": "$2b$10$c7tKck9JHfa5phJsovgSsuVA9fGPQ1GQo30JbGB.m5FWKWhR8GYsm",
+    "email": "username1@gmail.com",
+    "role": "guest"
+  },
+  {
+    "id": "5cc8aee2-9911-4192-aa55-2485265fffd5",
+    "username": "username2",
+    "passwordHash": "$2b$10$5yJUQeX9.TMwho5Tt4KELuSTIgOMk3C9CJqXLukfJISSvQxWO6UNy",
+    "email": "username1@gmail.com",
+    "role": "admin"
+  },
+  {
+    "id": "de240352-c69a-4e79-8896-693ae8704b6d",
+    "username": "username3",
+    "passwordHash": "$2b$10$xW5i/R28VGFVSBgUcFvYA.MxVapW5QWOiz/x1viWTQTM/zZiaF1Tm",
+    "email": "username1@gmail.com",
+    "role": "admin"
+  }
+]
