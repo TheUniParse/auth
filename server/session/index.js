@@ -1,23 +1,3 @@
-
-/** authentication process
- * signUp/register: create new account (add user to database)
- *   (email, new username, new password)
- * 
- * signIn/logIn: lets say we have multipli devices
- *   first login: (email / username, password)
- *   subsequent login's: cookie (session based / jsonWebToken)
- * 
- * signOut/logOut: remove cookie (session based / jsonWebToken)
- * 
- * delete account: remove user from database
- */
-
-/** security notes
- * sessions are statefull (server store it)
- * stored in secure httpOnlyt cookie (no access to client js)
- * ⚠️ cookie can manual accessed (devTools/application/cookies)
- */
-
 import express from 'express'
 import bcrypt from 'bcrypt'
 import cors from 'cors'
