@@ -1,2 +1,16 @@
 [
+  {
+    "id": "87f3472c-dfa2-4c7d-9e63-cb672cd9a42a",
+    "username": "guest",
+    "passwordHash": "$2b$10$1HAKLwxelsVKjfFPZa8Kf.yLUaQEu.4xy4iv1xrDxxSqoyASKqh72",
+    "email": "theuniparse@gmail.com",
+    "role": "guest"
+  },
+  {
+    "id": "9d056515-ea2f-4ef3-a54f-6cf0fdb72d61",
+    "username": "admin",
+    "passwordHash": "$2b$10$mg4G9lD5dpz.14P7US2KkeZRmMuwFnZeIUKDQdnqtIulxGwQaoB7G",
+    "email": "theuniparse@gmail.com",
+    "role": "admin"
+  }
 ]

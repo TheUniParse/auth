@@ -1,16 +1,17 @@
-import domain from "./domain"
+import domain from './domain'
+import Legend from './legend'
 
-export default function Admin({ setMessage }: any) {
+export default function Authorization({ setMessage }: any) {
   return (
-    <fieldset className='m-0  rounded-xl text-center'>
-      <legend className='text-center text-3xl'>
-        Authorization
-      </legend>
+    <>
+      <Legend border='dashed'>Authorization</Legend>
 
-      <button type='button' onClick={handler}>
+      <button className='mt-2' type='button' onClick={handler}>
         Request Admin Access
       </button>
-    </fieldset>
+      <br />
+      <br />
+    </>
   )
 
   async function handler() {

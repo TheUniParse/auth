@@ -1,17 +1,17 @@
 import domain from './domain'
+import Legend from './legend'
 
 export default function Leave({
   updateUsers,
   setMessage,
 }: any) {
   return (
-    <fieldset className='m-0  rounded-xl text-center'>
-      <legend className='text-center text-3xl'>Leaving</legend>
+    <>
+      <Legend border='dashed'>Leaving</Legend>
 
-      <button type='button' onClick={() => handler('logout')}>
+      <button className='my-2' type='button' onClick={() => handler('logout')}>
         LogOut / SignOut
       </button>
-      <br />
       <br />
 
       <button
@@ -20,7 +20,7 @@ export default function Leave({
         onClick={() => handler('deleteAccount')}>
         Delete Account
       </button>
-    </fieldset>
+    </>
   )
 
   async function handler(route: string) {

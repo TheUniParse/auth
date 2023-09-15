@@ -29,6 +29,7 @@ import {
   hasUser,
   deleteUser
 } from '../users.js'
+import { log } from '../utilities.js'
 
 // can be stored in database, but in memory faster !!
 const SESSIONS = new Map()
@@ -66,8 +67,7 @@ app.post('/register', async (req, res) => {
   res.send(`${username} registered as ${role} !`)
 
   const time = new Date().toLocaleString()
-  console.log(`${username} registered as ${role} at ${time}`)
-  console.log(`password hash: ${passwordHash}`)
+  log(`${username} registered as ${role} at ${time}`)
 })
 
 // logIn / signIn ......................................
@@ -91,15 +91,14 @@ app.post('/login', async (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: 'none', // for test purposes
-  }).send(`${username} logged-in successfully`)
+  }).send(`${username} logIn seccessfully`)
 
   const time = new Date().toLocaleString()
-  console.log(`${username} logged-in at ${time}`)
-  console.log(`sessionId: ${sessionId}`)
+  log(`${username} logIn at ${time}\nsessionId: ${sessionId}`)
 })
 
 // logOut / signOut ....................................
-app.delete('/logout', sessionAuthentication, (req, res) => {
+app.delete('/logout', auth, (req, res) => {
   const { sessionId } = req.cookies
   SESSIONS.delete(sessionId)
   res.clearCookie('sessionId')
@@ -107,12 +106,12 @@ app.delete('/logout', sessionAuthentication, (req, res) => {
   const { id } = req.user
   const user = getUser({ id })
   const { username } = user
-  res.send(`${username} logged out seccessfully`)
-  console.log(`${username} logged out seccessfully`)
+  res.send(`${username} logOut seccessfully`)
+  log(`${username} logOut`)
 })
 
 // delete account ......................................
-app.delete('/deleteAccount', sessionAuthentication, (req, res) => {
+app.delete('/deleteAccount', auth, (req, res) => {
   const { sessionId } = req.cookies
   SESSIONS.delete(sessionId)
   res.clearCookie('sessionId')
@@ -123,24 +122,25 @@ app.delete('/deleteAccount', sessionAuthentication, (req, res) => {
 
   const { username } = user
   res.send(`${username} deleted account seccessfully`)
-  console.log(`${username} deleted account seccessfully`)
+  log(`${username} deleted account`)
 })
 
 // authorization .......................................
-app.get('/admin', sessionAuthentication, (req, res) => {
+app.get('/admin', auth, (req, res) => {
   const { id } = req.user
   const user = getUser({ id })
 
-  if (user.role !== 'admin') return res.status(403)
-    .send('sorry, only admin have access') // Forbidden
+  const { role } = user
+  if (role !== 'admin') return res.status(403) // Forbidden
+    .send(`sorry "${role}", only "admin" have access`)
 
   const { username } = user
   res.send(`${username} grents admin access`)
-  console.log(`${username} grents admin access`)
+  log(`${username} grents admin access`)
 })
 
 // authentication middleware
-function sessionAuthentication(req, res, next) {
+function auth(req, res, next) {
   const { sessionId } = req.cookies
   if (!sessionId) return res.status(401) // Unauthorized
     .send('please login first !!')
@@ -153,7 +153,7 @@ function sessionAuthentication(req, res, next) {
 
   const user = getUser({ id })
   const { username } = user
-  console.log(`${username} authenticated !`)
+  log(`${username} authenticated`)
 
   next()
 }

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import domain from './domain'
 
-export default function Register({ updateUsers, setMessage }: any) {
+export default function Register({
+  updateUsers,
+  setMessage,
+}: any) {
   const [username, setUsername] = useState('username1')
   const [password, setPassword] = useState('Password1')
   const [confirmPassword, setConfirmPassword] =
@@ -15,8 +18,8 @@ export default function Register({ updateUsers, setMessage }: any) {
   return (
     <form onSubmit={handleSumbit}>
       <fieldset className='m-0  h-[100%] rounded-xl text-center'>
-        <legend className='text-center text-3xl'>
-          Registration
+        <legend>
+          <h2>Registration</h2>
         </legend>
 
         <label className='mb-1 inline-block text-left'>

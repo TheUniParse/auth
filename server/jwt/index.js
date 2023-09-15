@@ -33,6 +33,7 @@ import {
   hasUser,
   deleteUser
 } from '../users.js'
+import { log } from '../utilities.js'
 
 const app = express()
 
@@ -67,8 +68,7 @@ app.post('/register', async (req, res) => {
   res.send(`${username} registered as ${role} !`)
 
   const time = new Date().toLocaleString()
-  console.log(`${username} registered as ${role} at ${time}`)
-  console.log(`password hash: ${passwordHash}`)
+  log(`${username} registered as ${role} at ${time}`)
 })
 
 // logIn / signIn ......................................
@@ -97,26 +97,25 @@ app.post('/login', async (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: 'none', // for test purposes
-  }).send(`${username} logged-in successfully`)
+  }).send(`${username} logIn seccessfully`)
 
   const time = new Date().toLocaleString()
-  console.log(`${username} logged-in at ${time}`)
-  console.log(`jwt token: ${jwtToken}`)
+  log(`${username} logIn at ${time}\nJWT token: ${jwtToken}`)
 })
 
 // logOut / signOut ....................................
-app.delete('/logout', jwtAuthentication, (req, res) => {
+app.delete('/logout', auth, (req, res) => {
   res.clearCookie('jwtToken')
 
   const { id } = req.user
   const user = getUser({ id })
   const { username } = user
-  res.send(`${username} logged out seccessfully`)
-  console.log(`${username} logged out seccessfully`)
+  res.send(`${username} logOut seccessfully`)
+  log(`${username} logOut`)
 })
 
 // delete account ......................................
-app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
+app.delete('/deleteAccount', auth, (req, res) => {
   res.clearCookie('jwtToken')
 
   const { id } = req.user
@@ -125,24 +124,25 @@ app.delete('/deleteAccount', jwtAuthentication, (req, res) => {
 
   const { username } = user
   res.send(`${username} deleted account seccessfully`)
-  console.log(`${username} deleted account seccessfully`)
+  log(`${username} deleted account`)
 })
 
 // authorization .......................................
-app.get('/admin', jwtAuthentication, (req, res) => {
+app.get('/admin', auth, (req, res) => {
   const { id } = req.user
   const user = getUser({ id })
 
-  if (user.role !== 'admin') return res.status(403)
-    .send('sorry, only admin have access') // Forbidden
+  const { role } = user
+  if (role !== 'admin') return res.status(403) // Forbidden
+    .send(`sorry "${role}", only "admin" have access`)
 
   const { username } = user
   res.send(`${username} grents admin access`)
-  console.log(`${username} grents admin access`)
+  log(`${username} grents admin access`)
 })
 
 // authentication middleware
-function jwtAuthentication(req, res, next) {
+function auth(req, res, next) {
   const { jwtToken } = req.cookies
   if (!jwtToken) return res.status(401) // Unauthorized
     .send('please login first !!')
@@ -156,9 +156,8 @@ function jwtAuthentication(req, res, next) {
 
     const user = getUser({ id })
     const { username } = user
-    console.log(`${username} authenticated !`)
-    const formatedIatTime = new Date(iat).toLocaleString()
-    console.log(`jwtToken issued at ${formatedIatTime}`)
+    const time = new Date(iat).toLocaleString()
+    log(`${username} authenticated\nJWT issued at ${time}`)
 
     next()
   }

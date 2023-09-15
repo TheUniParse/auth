@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import domain from './domain'
+import Legend from './legend'
 
 export default function Login({ setMessage }: any) {
   const [username, setUsername] = useState('username1')
@@ -8,12 +9,10 @@ export default function Login({ setMessage }: any) {
   const user = { username, password }
 
   return (
-    <form onSubmit={handleSumbit}>
-      <fieldset className='m-0  h-[100%] rounded-xl text-center'>
-        <legend className='text-center text-3xl'>
-          Entering
-        </legend>
+    <>
+      <Legend border='dashed'>Entering</Legend>
 
+      <form onSubmit={handleSumbit} className='mb-5 px-3'>
         <label className='mb-1 inline-block text-left'>
           username:
           <br />
@@ -43,11 +42,14 @@ export default function Login({ setMessage }: any) {
           />
         </label>
         <br />
-        <br />
 
-        <input type='submit' value='LogIn / SignIn' />
-      </fieldset>
-    </form>
+        <input
+          className='mt-3'
+          type='submit'
+          value='LogIn / SignIn'
+        />
+      </form>
+    </>
   )
 
   async function handleSumbit(e: any) {
