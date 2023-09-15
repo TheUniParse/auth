@@ -6,14 +6,15 @@
   </summary>
 
 I built 2 express servers to authenticate users by cookies.
-- the first server based on the __statefull__ session's.
+
+- the first server based on the **statefull** session's.
   1. the server generate sessionId.
   2. then store it in memory/database.
   3. then send it to the client User-Agent as cookie.
-- the secound server based on the __stateless__ JsonWebToken'e.
+- the secound server based on the **stateless** JsonWebToken'e.
   1. the server generate jwtToken.
   2. then send it to the client User-Agent as cookie.
-</details>
+  </details>
 
 <details>
   <summary>
@@ -21,10 +22,12 @@ I built 2 express servers to authenticate users by cookies.
   </summary>
 
 - Register/SignUp: create new account
+
   - client submit Form [ email, username, password, ... ]
   - server add user to database
 
 - LogIn/SignIn: (lets say we have multiple devices)
+
   - First login:
     - client submit form [ username, password ]
     - server send cookie to user-agent
@@ -32,6 +35,7 @@ I built 2 express servers to authenticate users by cookies.
     - client user-agent send just cookie
 
 - LogOut/SignOut:
+
   - client send request (including cookie in requset)
   - server responds with clearCookie()
     - client user-agent remove the cookie
@@ -41,18 +45,20 @@ I built 2 express servers to authenticate users by cookies.
 - delete account:
   - same process as LogOut/SignOut
   - and server remove user from database
-</details>
+  </details>
 
 <details>
   <summary>
     <h2>⚠️ security notes</h2>
   </summary>
 
-even that the cookie are stored as: __secure__ (https) and __httpOnly__ (no client javascript access)  
-__hackers__ still can be manual access it, thought devTools / application / cookies
+even that the cookie are stored as: **secure** (https) and **httpOnly** (no client javascript access)  
+**hackers** still can be manual access it, thought devTools / application / cookies
+
 </details>
 
 ## Usage
+
 - clone my repository <code>git clone "https://github.com/TheUniParse/auth"</code>
 - install the dependencies <code>pnpm i</code>
 - run the front-end server (react & vite) <code>pnpm dev</code>
